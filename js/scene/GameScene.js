@@ -32,16 +32,39 @@ class GameScene extends BaseScene {
 
     loadImg() {
         // 各画像の読み込み
-        this.load.image(IMG_REV_ALL, DIR_IMG + "/" + FNAME_IMG_REV_ALL);
+        this.load.image(IMG_CONST.BLOCK, DIR_IMG + "/" + IMGNAME_CONST.BLOCK);
+        this.load.image(IMG_CONST.FLOOR, DIR_IMG + "/" + IMGNAME_CONST.FLOOR);
+        this.load.image(IMG_CONST.BREAD, DIR_IMG + "/" + IMGNAME_CONST.BREAD);
+        this.load.image(IMG_CONST.BREADCRUMS, DIR_IMG + "/" + IMGNAME_CONST.BREADCRUMS);
+        this.load.image(IMG_CONST.MINICOW, DIR_IMG + "/" + IMGNAME_CONST.MINICOW);
+        this.load.image(IMG_CONST.MILK, DIR_IMG + "/" + IMGNAME_CONST.MILK);
+
 
         // 各スプライトシートの読み込み
-        // this.load.spritesheet("slime", "assets/img/slime_spriteSheet.png", {
-        //     frameWidth: UNIT_SIZE,
-        //     frameHeight: UNIT_SIZE
-        // });
+        // プレイヤー
+        this.load.spritesheet(
+            IMG_CONST.PLAYER_RIGHT,
+            DIR_CONST.DIR_IMG + "/" + IMG_CONST.PLAYER_RIGHT,
+            {
+                frameWidth: GSCONST.PLAYER_WIDTH,
+                frameHeight: GSCONST.PLAYER_HEIGHT
+            }
+        );
+
+        // 敵
+        this.load.spritesheet(
+            IMG_CONST.ENEMY_RIGHT,
+            DIR_CONST.DIR_IMG + "/" + IMG_CONST.ENEMY_RIGHT,
+            {
+                frameWidth: GSCONST.ENEMY_WIDTH,
+                frameHeight: GSCONST.ENEMY_HEIGHT
+            }
+        );
+
     }
 
     preload() {
+        // 各画像の読み込み
         this.loadImg();
     }
 
