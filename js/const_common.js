@@ -1,8 +1,8 @@
 /* 全シーン共通変数 */
 const COMMON_CONST = {
     // 画面サイズ
-    D_WIDTH: 720,
-    D_HEIGHT: 720,
+    D_WIDTH: 800,
+    D_HEIGHT: 800,
 
     // ゲームモードのID
     MODE_EASY: 0,
