@@ -1,7 +1,7 @@
 // 画像ファイルのディレクトリ
 const DIR_CONST = {
     DIR_ASSETS: "./assets",
-    DIR_IMG: DIR_ASSETS + "/img",
+    DIR_IMG: "./assets/img",
 };
 
 // 各画像ファイルのファイル名
@@ -26,4 +26,8 @@ const IMG_CONST = {
     BREADCRUMS: "BREADCRUMS",
     MINICOW: "MINICOW",
     MILK: "MILK",
+};
+
+const ANIM_CONST = {
+    PLAYER_RIGHT_ANIM: "PLAYER_RIGHT_ANIM",
 };

@@ -10,6 +10,10 @@ class GameScene extends BaseScene {
         // 各パラメータ
         // アイテムリスト
         this.itemList = [];
+        // ブロック（足場）リスト
+        this.blockList = [];
+        // 地面リスト
+        this.floorList = [];
 
         // 各フラグ
         // ゲームオーバーフラグ
@@ -28,23 +32,93 @@ class GameScene extends BaseScene {
      */
     initParameters() {
 
+        // アイテムリスト
+        this.itemList = [];
+        this.itemGroup = this.physics.add.group();
+        // ブロック（足場）リスト
+        this.blockList = [];
+        this.blockGroup = this.physics.add.group();
+        // 地面リスト
+        this.floorList = [];
+        this.floorGroup = this.physics.add.group();
+
+        // 床の初期化
+        let floor = this.add.sprite(
+            GSCONST.FLOOR_WIDTH / 2,
+            COMMON_CONST.D_HEIGHT - GSCONST.FLOOR_HEIGHT / 2,
+            IMG_CONST.FLOOR
+        );
+        // グループに追加
+        this.floorGroup.add(floor);
+        // 物理演算を有効化
+        this.physics.add.existing(floor);
+        this.physics.world.enable(floor);
+        floor.body.setSize(GSCONST.FLOOR_WIDTH, GSCONST.FLOOR_HEIGHT);
+        // 水平方向のみ移動を有効化
+        floor.body.setImmovable(true);
+        floor.body.setVelocityX(-GSCONST.PLAYER_SPEED);
+
+        //位置を固定
+
+        // 床の追加
+        this.floorList.push(floor);
+
+        this.addFloor(floor.x);
+
+        // プレイヤーの生成
+        this.player = new Player(
+            this,
+            GSCONST.PLAYER_START_X,
+            GSCONST.PLAYER_START_Y
+        );
+
+        // TODO: ゲーム開始フラグ
+        this.gameStartFlg = true;
+
     }
 
+    /**
+     * 床の追加
+     */
+    addFloor(newFloorX) {
+        // 床の初期化
+        let floor = this.add.sprite(
+            newFloorX + GSCONST.FLOOR_WIDTH,
+            COMMON_CONST.D_HEIGHT - GSCONST.FLOOR_HEIGHT / 2,
+            IMG_CONST.FLOOR
+        );
+        // グループに追加
+        this.floorGroup.add(floor);
+        // 物理演算を有効化
+        this.physics.world.enable(floor);
+        this.physics.add.existing(floor);
+        floor.body.setSize(GSCONST.FLOOR_WIDTH, GSCONST.FLOOR_HEIGHT);
+        // 水平方向のみ移動を有効化
+        floor.body.setImmovable(true);
+        floor.body.setVelocityX(-GSCONST.PLAYER_SPEED);
+
+        // 床の追加
+        this.floorList.push(floor);
+    }
+
+    /**
+     * このシーンで使用する画像の読み込みを行う
+     */
     loadImg() {
         // 各画像の読み込み
-        this.load.image(IMG_CONST.BLOCK, DIR_IMG + "/" + IMGNAME_CONST.BLOCK);
-        this.load.image(IMG_CONST.FLOOR, DIR_IMG + "/" + IMGNAME_CONST.FLOOR);
-        this.load.image(IMG_CONST.BREAD, DIR_IMG + "/" + IMGNAME_CONST.BREAD);
-        this.load.image(IMG_CONST.BREADCRUMS, DIR_IMG + "/" + IMGNAME_CONST.BREADCRUMS);
-        this.load.image(IMG_CONST.MINICOW, DIR_IMG + "/" + IMGNAME_CONST.MINICOW);
-        this.load.image(IMG_CONST.MILK, DIR_IMG + "/" + IMGNAME_CONST.MILK);
+        this.load.image(IMG_CONST.BLOCK, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.BLOCK);
+        this.load.image(IMG_CONST.FLOOR, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.FLOOR);
+        this.load.image(IMG_CONST.BREAD, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.BREAD);
+        this.load.image(IMG_CONST.BREADCRUMS, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.BREADCRUMS);
+        this.load.image(IMG_CONST.MINICOW, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.MINICOW);
+        this.load.image(IMG_CONST.MILK, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.MILK);
 
 
         // 各スプライトシートの読み込み
         // プレイヤー
         this.load.spritesheet(
             IMG_CONST.PLAYER_RIGHT,
-            DIR_CONST.DIR_IMG + "/" + IMG_CONST.PLAYER_RIGHT,
+            DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.PLAYER_RIGHT,
             {
                 frameWidth: GSCONST.PLAYER_WIDTH,
                 frameHeight: GSCONST.PLAYER_HEIGHT
@@ -54,7 +128,7 @@ class GameScene extends BaseScene {
         // 敵
         this.load.spritesheet(
             IMG_CONST.ENEMY_RIGHT,
-            DIR_CONST.DIR_IMG + "/" + IMG_CONST.ENEMY_RIGHT,
+            DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.ENEMY_RIGHT,
             {
                 frameWidth: GSCONST.ENEMY_WIDTH,
                 frameHeight: GSCONST.ENEMY_HEIGHT
@@ -73,56 +147,109 @@ class GameScene extends BaseScene {
         /* 画面の初期表示 START */
         let g = this.add.graphics();
         // 各エリアの描画
-        g.lineStyle(STROKE_WEIGHT, COLOR_AREA_STROKE, 1);
+        g.lineStyle(
+            GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT,
+            GS_SCREEN_COSNT.COMMON_COLOR_STROKE,
+            1
+        );
+
         // 情報表示エリア
-        g.fillStyle(COLOR_AREA_NORMAL, 1)
+        g.fillStyle(GS_SCREEN_COSNT.COMMON_COLOR_AREA, 1)
             .fillRect(
-                AREA_X_INFOAREA,
-                AREA_Y_INFOAREA,
-                AREA_W_INFOAREA,
-                AREA_H_INFOAREA
+                GS_SCREEN_COSNT.X_INFOAREA,
+                GS_SCREEN_COSNT.Y_INFOAREA,
+                GS_SCREEN_COSNT.W_INFOAREA,
+                GS_SCREEN_COSNT.H_INFOAREA,
             ).strokeRect(
-                AREA_X_INFOAREA + STROKE_WEIGHT / 2,
-                AREA_Y_INFOAREA + STROKE_WEIGHT / 2,
-                AREA_W_INFOAREA - STROKE_WEIGHT,
-                AREA_H_INFOAREA - STROKE_WEIGHT);
+                GS_SCREEN_COSNT.X_INFOAREA + GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT / 2,
+                GS_SCREEN_COSNT.Y_INFOAREA + GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT / 2,
+                GS_SCREEN_COSNT.W_INFOAREA - GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT,
+                GS_SCREEN_COSNT.H_INFOAREA - GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT
+            );
 
-        // モード選択エリア
-        g.fillStyle(COLOR_AREA_NORMAL, 1)
+        // ゲームエリア
+        g.fillStyle(GS_SCREEN_COSNT.COLOR_GAMEAREA, 1)
             .fillRect(
-                AREA_X_MODECHOICEAREA,
-                AREA_Y_MODECHOICEAREA,
-                AREA_W_MODECHOICEAREA,
-                AREA_H_MODECHOICEAREA
-            ).strokeRect(
-                AREA_X_MODECHOICEAREA + STROKE_WEIGHT / 2,
-                AREA_Y_MODECHOICEAREA + STROKE_WEIGHT / 2,
-                AREA_W_MODECHOICEAREA - STROKE_WEIGHT,
-                AREA_H_MODECHOICEAREA - STROKE_WEIGHT);
-
-        // パズルエリア
-        g.fillStyle(COLOR_AREA_NORMAL, 1)
-            .fillRect(
-                AREA_X_PUZZLEAREA,
-                AREA_Y_PUZZLEAREA,
-                AREA_W_PUZZLEAREA,
-                AREA_H_PUZZLEAREA
-            ).strokeRect(
-                AREA_X_PUZZLEAREA + STROKE_WEIGHT / 2,
-                AREA_Y_PUZZLEAREA + STROKE_WEIGHT / 2,
-                AREA_W_PUZZLEAREA - STROKE_WEIGHT,
-                AREA_H_PUZZLEAREA - STROKE_WEIGHT);
+                GS_SCREEN_COSNT.X_GAMEAREA,
+                GS_SCREEN_COSNT.Y_GAMEAREA,
+                GS_SCREEN_COSNT.W_GAMEAREA,
+                GS_SCREEN_COSNT.H_GAMEAREA,
+            );
 
         // 各エリアの描画
         this.createInfoArea();
-        this.createModeChoiceArea();
-        this.createPuzzleArea();
+        this.createGameArea();
 
         /* 画面の初期表示 END */
+
+        // パラメータの初期化
+        this.initParameters();
+
+        /* スプライトシートを設定 */
+        // プレイヤー
+        this.anims.create({
+            key: ANIM_CONST.PLAYER_RIGHT_ANIM,
+            frames: this.anims.generateFrameNumbers(
+                IMG_CONST.PLAYER_RIGHT,
+                { start: 0, end: 3 }
+            ),
+            frameRate: 10,
+            repeat: -1
+        });
+        // プレイヤーのアニメーションを再生する
+        this.player.anims.play(ANIM_CONST.PLAYER_RIGHT_ANIM);
+
+        // 衝突判定のハンドラ設定
+        this.physics.add.collider(this.player, this.floorGroup, this.colHandlerPlayeAndFloor, null, this);
     }
 
-    update() {
+    /**
+     * プレイヤーと床の衝突判定
+     * @param {Player} player 
+     * @param {Phaser.GameObjects.Sprite} floor 
+     */
+    colHandlerPlayeAndFloor(player, floor) {
+        // プレイヤーのy方向速度を0にする
+        player.onGroundFlg = true;
+    }
 
+    update(time, delta) {
+        // ゲーム開始している場合
+        if (this.gameStartFlg) {
+
+            // 床のループ用処理
+            this.floorList.forEach(floorSpr => {
+                floorSpr.x = Math.round(floorSpr.x);
+                floorSpr.y = Math.round(floorSpr.y);
+            });
+            // 床が画面外に出た場合
+            if (this.floorList[0].x <= - GSCONST.FLOOR_WIDTH / 2) {
+                // 新たな床を追加する
+                // 位置を微調整
+                this.addFloor(
+                    this.floorList[this.floorList.length - 1].x +
+                    - GSCONST.PLAYER_SPEED / COMMON_CONST.FPS
+                );
+                // 床を削除
+                this.floorList.splice(0, 1);
+            }
+
+            // プレイヤーの更新処理
+            this.player.update();
+        }
+
+        // ゲームオーバーの場合
+        if (this.gameOverFlg) {
+
+        }
+        // ゲーム一時停止した場合
+        if (this.gamePauseFlg) {
+
+        }
+        // ゲームクリアした場合
+        if (this.gameClearFlg) {
+
+        }
     }
 
     /**
@@ -130,27 +257,20 @@ class GameScene extends BaseScene {
      */
     createInfoArea() {
         // 表示する項目
-        let info_val_playTime = "0.0" + INFO_VAL_PLAYTIME_END;
-        let info_val_reverse = 0 + INFO_VAL_REVERSETIME_END;
-        let info_val_mode = MODE_NAME[this.gameMode];
-        let info_val_highScore = 0 + INFO_VAL_HIGHSCORE_MID + "0.0" + INFO_VAL_HIGHSCORE_END;
+        // let info_val_playTime = "0.0" + INFO_VAL_PLAYTIME_END;
+        // let info_val_reverse = 0 + INFO_VAL_REVERSETIME_END;
+        // let info_val_mode = MODE_NAME[this.gameMode];
+        // let info_val_highScore = 0 + INFO_VAL_HIGHSCORE_MID + "0.0" + INFO_VAL_HIGHSCORE_END;
 
-        // 情報表示エリアの各文字列
-        this.setText(INFO_NAME_PLAYTIME, INFO_X, INFO_Y_PLAYTIME, INFO_H, INFO_COLOR, true);
-        this.setText(INFO_NAME_REVERSETIME, INFO_X, INFO_Y_REVERSE, INFO_H, INFO_COLOR, true);
-        this.setText(INFO_NAME_MODE, INFO_X, INFO_Y_MODE, INFO_H, INFO_COLOR, true);
-        this.setText(INFO_NAME_HIGHSCORE, INFO_X, INFO_Y_HIGHSCORE, INFO_H, INFO_COLOR, true);
+        // // 情報表示エリアの各文字列
+        // this.setText(INFO_NAME_PLAYTIME, INFO_X, INFO_Y_PLAYTIME, INFO_H, INFO_COLOR, true);
+        // this.setText(INFO_NAME_REVERSETIME, INFO_X, INFO_Y_REVERSE, INFO_H, INFO_COLOR, true);
+        // this.setText(INFO_NAME_MODE, INFO_X, INFO_Y_MODE, INFO_H, INFO_COLOR, true);
+        // this.setText(INFO_NAME_HIGHSCORE, INFO_X, INFO_Y_HIGHSCORE, INFO_H, INFO_COLOR, true);
 
-        let infoValX = INFO_X + INFO_W;
-        this.InfoArea.textObject[INFO_NAME_PLAYTIME] =
-            this.setText(info_val_playTime, infoValX, INFO_Y_PLAYTIME, INFO_H, INFO_COLOR, true);
-        this.InfoArea.textObject[INFO_NAME_REVERSETIME] =
-            this.setText(info_val_reverse, infoValX, INFO_Y_REVERSE, INFO_H, INFO_COLOR, true);
-        this.InfoArea.textObject[INFO_NAME_MODE] =
-            this.setText(info_val_mode, infoValX, INFO_Y_MODE, INFO_H, INFO_COLOR, true);
-        this.InfoArea.textObject[INFO_NAME_HIGHSCORE] =
-            this.setText(info_val_highScore, infoValX, INFO_Y_HIGHSCORE, INFO_H, INFO_COLOR, true);
-
+        // let infoValX = INFO_X + INFO_W;
+        // this.InfoArea.textObject[INFO_NAME_PLAYTIME] =
+        //     this.setText(info_val_playTime, infoValX, INFO_Y_PLAYTIME, INFO_H, INFO_COLOR, true);
     }
 
     /**
@@ -158,4 +278,5 @@ class GameScene extends BaseScene {
      */
     createGameArea() {
     }
+
 };

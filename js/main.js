@@ -16,15 +16,19 @@ const config = {
         GameScene
     ],
 
-    fps: {
-        target: 30,
-        forceSetTimeOut: true
-    },
+    // フレームレート設定
+    fps: 60,
+
+    // fps: {
+    //     target: 60,
+    //     forceSetTimeOut: true
+    // },
 
     physics: {
         default: "arcade",
         arcade: {
             // スプライトに緑の枠を表示
+            // 物理演算ボディに紫の枠を表示
             debug: true,
             // 重力の方向と強さ
             gravity: {

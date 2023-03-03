@@ -9,4 +9,7 @@ const COMMON_CONST = {
     MODE_NORMAL: 1,
     MODE_HARD: 2,
     MODE_EXTRA: 3,
+
+    // fps
+    FPS: 60,
 };

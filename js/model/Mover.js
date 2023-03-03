@@ -1,4 +1,4 @@
-class Player extends Phaser.GameObjects.Sprite {
+class Mover extends Phaser.GameObjects.Sprite {
     /**
      * コンストラクタ
      * @param {string} scene シーン名
@@ -28,9 +28,9 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     /**
-     * オブジェクトと衝突した際の処理
-     * @param {Phaser.GameObjects.Sprite} object 衝突したオブジェクト
+     * 更新処理
      */
-    onCollision(object) {
+    update() {
+
     }
 }
