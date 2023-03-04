@@ -1,15 +1,9 @@
 class GameScene extends BaseScene {
     // コンストラクタ
     constructor() {
-        super('GameScene');
-
-        // 各エリアを管理するオブジェクト
-        this.infoArea = new InfoArea();
-        this.gameArea = new GameArea();
+        super(COMMON_CONST.GAMESCENE);
 
         // 各パラメータ
-        // アイテムリスト
-        this.itemList = [];
         // ブロック（足場）リスト
         this.blockList = [];
 
@@ -30,16 +24,17 @@ class GameScene extends BaseScene {
      */
     initParameters() {
 
-        // アイテムリスト
-        this.itemList = [];
-        this.itemGroup = this.physics.add.group();
+        // アイテム管理クラス
+        this.itemManager = new ItemManager(this);
+        this.itemManager.initParams();
+
         // ブロック（足場）リスト
         this.blockList = [];
         this.blockGroup = this.physics.add.group();
+
         // 地面管理クラス
         this.floorManager = new FloorManager(this);
         this.floorManager.initParams();
-
         // 床の初期化
         this.floorManager.addFloor();
         this.floorManager.addFloor();
@@ -53,89 +48,24 @@ class GameScene extends BaseScene {
 
         // TODO: ゲーム開始フラグ
         this.gameStartFlg = true;
-
     }
 
     /**
      * このシーンで使用する画像の読み込みを行う
      */
-    loadImg() {
-        // 各画像の読み込み
-        this.load.image(IMG_CONST.BLOCK, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.BLOCK);
-        this.load.image(IMG_CONST.FLOOR, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.FLOOR);
-        this.load.image(IMG_CONST.BREAD, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.BREAD);
-        this.load.image(IMG_CONST.BREADCRUMS, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.BREADCRUMS);
-        this.load.image(IMG_CONST.MINICOW, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.MINICOW);
-        this.load.image(IMG_CONST.MILK, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.MILK);
+    loadImg() { }
 
-
-        // 各スプライトシートの読み込み
-        // プレイヤー
-        this.load.spritesheet(
-            IMG_CONST.PLAYER_RIGHT,
-            DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.PLAYER_RIGHT,
-            {
-                frameWidth: GSCONST.PLAYER_WIDTH,
-                frameHeight: GSCONST.PLAYER_HEIGHT
-            }
-        );
-
-        // 敵
-        this.load.spritesheet(
-            IMG_CONST.ENEMY_RIGHT,
-            DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.ENEMY_RIGHT,
-            {
-                frameWidth: GSCONST.ENEMY_WIDTH,
-                frameHeight: GSCONST.ENEMY_HEIGHT
-            }
-        );
-
-    }
-
-    preload() {
-        // 各画像の読み込み
-        this.loadImg();
-    }
+    preload() { }
 
     // 画面生成時の実行関数
     create() {
-        /* 画面の初期表示 START */
-        let g = this.add.graphics();
-        // 各エリアの描画
-        g.lineStyle(
-            GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT,
-            GS_SCREEN_COSNT.COMMON_COLOR_STROKE,
-            1
-        );
-
-        // 情報表示エリア
-        g.fillStyle(GS_SCREEN_COSNT.COMMON_COLOR_AREA, 1)
-            .fillRect(
-                GS_SCREEN_COSNT.X_INFOAREA,
-                GS_SCREEN_COSNT.Y_INFOAREA,
-                GS_SCREEN_COSNT.W_INFOAREA,
-                GS_SCREEN_COSNT.H_INFOAREA,
-            ).strokeRect(
-                GS_SCREEN_COSNT.X_INFOAREA + GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT / 2,
-                GS_SCREEN_COSNT.Y_INFOAREA + GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT / 2,
-                GS_SCREEN_COSNT.W_INFOAREA - GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT,
-                GS_SCREEN_COSNT.H_INFOAREA - GS_SCREEN_COSNT.COMMON_STROKE_WEIGHT
-            );
-
-        // ゲームエリア
-        g.fillStyle(GS_SCREEN_COSNT.COLOR_GAMEAREA, 1)
-            .fillRect(
-                GS_SCREEN_COSNT.X_GAMEAREA,
-                GS_SCREEN_COSNT.Y_GAMEAREA,
-                GS_SCREEN_COSNT.W_GAMEAREA,
-                GS_SCREEN_COSNT.H_GAMEAREA,
-            );
+        // 各エリアを管理するオブジェクト
+        this.infoArea = new InfoArea(this);
+        this.gameArea = new GameArea(this);
 
         // 各エリアの描画
-        this.createInfoArea();
-        this.createGameArea();
-
-        /* 画面の初期表示 END */
+        this.infoArea.createArea();
+        this.gameArea.createArea();
 
         // パラメータの初期化
         this.initParameters();
@@ -174,6 +104,8 @@ class GameScene extends BaseScene {
 
             // 地面の更新処理
             this.floorManager.update();
+            // アイテムの更新処理
+            this.itemManager.update();
             // プレイヤーの更新処理
             this.player.update();
         }
@@ -191,32 +123,4 @@ class GameScene extends BaseScene {
 
         }
     }
-
-    /**
-     * 情報表示エリアの描画を行う
-     */
-    createInfoArea() {
-        // 表示する項目
-        // let info_val_playTime = "0.0" + INFO_VAL_PLAYTIME_END;
-        // let info_val_reverse = 0 + INFO_VAL_REVERSETIME_END;
-        // let info_val_mode = MODE_NAME[this.gameMode];
-        // let info_val_highScore = 0 + INFO_VAL_HIGHSCORE_MID + "0.0" + INFO_VAL_HIGHSCORE_END;
-
-        // // 情報表示エリアの各文字列
-        // this.setText(INFO_NAME_PLAYTIME, INFO_X, INFO_Y_PLAYTIME, INFO_H, INFO_COLOR, true);
-        // this.setText(INFO_NAME_REVERSETIME, INFO_X, INFO_Y_REVERSE, INFO_H, INFO_COLOR, true);
-        // this.setText(INFO_NAME_MODE, INFO_X, INFO_Y_MODE, INFO_H, INFO_COLOR, true);
-        // this.setText(INFO_NAME_HIGHSCORE, INFO_X, INFO_Y_HIGHSCORE, INFO_H, INFO_COLOR, true);
-
-        // let infoValX = INFO_X + INFO_W;
-        // this.InfoArea.textObject[INFO_NAME_PLAYTIME] =
-        //     this.setText(info_val_playTime, infoValX, INFO_Y_PLAYTIME, INFO_H, INFO_COLOR, true);
-    }
-
-    /**
-     * ゲームエリアの描画
-     */
-    createGameArea() {
-    }
-
 };

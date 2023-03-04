@@ -1,6 +1,5 @@
 class FloorManager {
     constructor(scene) {
-        console.log(scene);
         // 地面リスト
         this.floorList = [];
         this.floorGroup = scene.physics.add.group();
@@ -55,12 +54,15 @@ class FloorManager {
         this.floorList.forEach(floorSpr => {
             floorSpr.x = Math.round(floorSpr.x);
             floorSpr.y = Math.round(floorSpr.y);
+
         });
         // 地面が画面外に出た場合
         if (this.floorList[0].x <= - GSCONST.FLOOR_WIDTH / 2) {
             // 新たな地面を追加する
             this.addFloor();
             // 地面を削除
+            let firstChild = this.floorGroup.getChildren()[0];
+            this.floorGroup.remove(firstChild, true, true);
             this.floorList.splice(0, 1);
         }
     }

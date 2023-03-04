@@ -18,8 +18,12 @@ const GSCONST = {
     FLOOR_WIDTH: 1000,
     FLOOR_HEIGHT: 100,
 
+    // プレイヤー、敵の初期座標
+    PLAYER_START_X: 350,
+    PLAYER_START_Y: COMMON_CONST.D_HEIGHT - 300,
+
     // プレイヤーの移動速度
-    PLAYER_SPEED: 120,
+    PLAYER_SPEED: 180,
     PLAYER_JUMP_SPEED: 200,
 
     // プレイヤーの移動速度の変化倍率
@@ -39,10 +43,6 @@ const GSCONST = {
 
     // 重力
     GRAVITY: 500,
-
-    // プレイヤー、敵の初期座標
-    PLAYER_START_X: 50,
-    PLAYER_START_Y: COMMON_CONST.D_HEIGHT - 200,
 }
 
 // 画面描画用定数

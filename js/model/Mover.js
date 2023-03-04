@@ -1,7 +1,7 @@
 class Mover extends Phaser.GameObjects.Sprite {
     /**
      * コンストラクタ
-     * @param {string} scene シーン名
+     * @param {Phaser.Scene} scene シーン名
      * @param {int} x 初期x座標
      * @param {int} y 初期y座標
      */

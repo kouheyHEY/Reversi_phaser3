@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF8">
     <!-- タイトル -->
-    <title>Super Reversi</title>
+    <title>CurryTerror 2D</title>
     <link rel="stylesheet" type="text/css" href="common.css">
 </head>
 
@@ -22,16 +22,20 @@
     <script src="js/const_gameScene.js"></script>
 
     <!-- エリアクラスの設定 -->
+    <script src="js/area/BaseArea.js"></script>
     <script src="js/area/GameArea.js"></script>
     <script src="js/area/InfoArea.js"></script>
 
     <!-- モデルの設定 -->
     <script src="js/model/FloorManager.js"></script>
+    <script src="js/model/Item.js"></script>
+    <script src="js/model/ItemManager.js"></script>
     <script src="js/model/Mover.js"></script>
     <script src="js/model/Player.js"></script>
 
     <!-- シーンの設定 -->
     <script src="js/scene/BaseScene.js"></script>
+    <script src="js/scene/GameLoadScene.js"></script>
     <script src="js/scene/GameScene.js"></script>
 
     <!-- 実行用クラスの設定 -->
