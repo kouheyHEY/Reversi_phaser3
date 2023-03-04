@@ -12,8 +12,6 @@ class GameScene extends BaseScene {
         this.itemList = [];
         // ブロック（足場）リスト
         this.blockList = [];
-        // 地面リスト
-        this.floorList = [];
 
         // 各フラグ
         // ゲームオーバーフラグ
@@ -38,32 +36,13 @@ class GameScene extends BaseScene {
         // ブロック（足場）リスト
         this.blockList = [];
         this.blockGroup = this.physics.add.group();
-        // 地面リスト
-        this.floorList = [];
-        this.floorGroup = this.physics.add.group();
+        // 地面管理クラス
+        this.floorManager = new FloorManager(this);
+        this.floorManager.initParams();
 
         // 床の初期化
-        let floor = this.add.sprite(
-            GSCONST.FLOOR_WIDTH / 2,
-            COMMON_CONST.D_HEIGHT - GSCONST.FLOOR_HEIGHT / 2,
-            IMG_CONST.FLOOR
-        );
-        // グループに追加
-        this.floorGroup.add(floor);
-        // 物理演算を有効化
-        this.physics.add.existing(floor);
-        this.physics.world.enable(floor);
-        floor.body.setSize(GSCONST.FLOOR_WIDTH, GSCONST.FLOOR_HEIGHT);
-        // 水平方向のみ移動を有効化
-        floor.body.setImmovable(true);
-        floor.body.setVelocityX(-GSCONST.PLAYER_SPEED);
-
-        //位置を固定
-
-        // 床の追加
-        this.floorList.push(floor);
-
-        this.addFloor(floor.x);
+        this.floorManager.addFloor();
+        this.floorManager.addFloor();
 
         // プレイヤーの生成
         this.player = new Player(
@@ -75,30 +54,6 @@ class GameScene extends BaseScene {
         // TODO: ゲーム開始フラグ
         this.gameStartFlg = true;
 
-    }
-
-    /**
-     * 床の追加
-     */
-    addFloor(newFloorX) {
-        // 床の初期化
-        let floor = this.add.sprite(
-            newFloorX + GSCONST.FLOOR_WIDTH,
-            COMMON_CONST.D_HEIGHT - GSCONST.FLOOR_HEIGHT / 2,
-            IMG_CONST.FLOOR
-        );
-        // グループに追加
-        this.floorGroup.add(floor);
-        // 物理演算を有効化
-        this.physics.world.enable(floor);
-        this.physics.add.existing(floor);
-        floor.body.setSize(GSCONST.FLOOR_WIDTH, GSCONST.FLOOR_HEIGHT);
-        // 水平方向のみ移動を有効化
-        floor.body.setImmovable(true);
-        floor.body.setVelocityX(-GSCONST.PLAYER_SPEED);
-
-        // 床の追加
-        this.floorList.push(floor);
     }
 
     /**
@@ -200,7 +155,7 @@ class GameScene extends BaseScene {
         this.player.anims.play(ANIM_CONST.PLAYER_RIGHT_ANIM);
 
         // 衝突判定のハンドラ設定
-        this.physics.add.collider(this.player, this.floorGroup, this.colHandlerPlayeAndFloor, null, this);
+        this.physics.add.collider(this.player, this.floorManager.floorGroup, this.colHandlerPlayeAndFloor, null, this);
     }
 
     /**
@@ -217,23 +172,8 @@ class GameScene extends BaseScene {
         // ゲーム開始している場合
         if (this.gameStartFlg) {
 
-            // 床のループ用処理
-            this.floorList.forEach(floorSpr => {
-                floorSpr.x = Math.round(floorSpr.x);
-                floorSpr.y = Math.round(floorSpr.y);
-            });
-            // 床が画面外に出た場合
-            if (this.floorList[0].x <= - GSCONST.FLOOR_WIDTH / 2) {
-                // 新たな床を追加する
-                // 位置を微調整
-                this.addFloor(
-                    this.floorList[this.floorList.length - 1].x +
-                    - GSCONST.PLAYER_SPEED / COMMON_CONST.FPS
-                );
-                // 床を削除
-                this.floorList.splice(0, 1);
-            }
-
+            // 地面の更新処理
+            this.floorManager.update();
             // プレイヤーの更新処理
             this.player.update();
         }
