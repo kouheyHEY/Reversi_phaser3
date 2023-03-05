@@ -108,7 +108,7 @@ class GameScene extends BaseScene {
     colHandlerPlayerAndItem(player, item) {
         // 衝突時の処理
         player.collideToItem(item);
-        this.itemManager.deleteItem(item);
+        this.itemManager.deleteItem(item, true);
     }
 
     update(time, delta) {

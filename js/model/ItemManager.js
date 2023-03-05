@@ -111,18 +111,26 @@ class ItemManager {
     /**
      * アイテムを削除する
      * @param {Item} item 削除対象のアイテム
+     * @param {boolean} byPlayer プレイヤーとの衝突による削除か否か
      */
-    deleteItem(item) {
+    deleteItem(item, byPlayer) {
         let itemName = item.texture.key;
         // プレイヤー側のアイテムの場合
         if (itemName == IMG_CONST.BREAD
             || itemName == IMG_CONST.MINICOW
         ) {
-            // 待ちリストに新たなアイテムを追加
-            if (itemName == IMG_CONST.BREAD) {
-                this.addItemToQueue(IMG_CONST.BREADCRUMS);
-            } else if (itemName == IMG_CONST.MINICOW) {
-                this.addItemToQueue(IMG_CONST.MILK);
+            if (byPlayer) {
+                // プレイヤーとの衝突による場合
+                // 敵側の待ちリストに新たなアイテムを追加
+                if (itemName == IMG_CONST.BREAD) {
+                    this.addItemToQueue(IMG_CONST.BREADCRUMS);
+                } else if (itemName == IMG_CONST.MINICOW) {
+                    this.addItemToQueue(IMG_CONST.MILK);
+                }
+            } else {
+                // プレイヤーとの衝突でない場合
+                // 待ちリストにアイテムをランダムで追加
+                this.addItemToQueueRandom();
             }
             // 要素を削除
             this.playerItemGroup.remove(item, true, true);
@@ -132,8 +140,19 @@ class ItemManager {
         if (itemName == IMG_CONST.BREADCRUMS
             || itemName == IMG_CONST.MILK
         ) {
-            // 待ちリストに新たなアイテムを追加
+            // if (byPlayer) {
+            //     // プレイヤーとの衝突による場合
+            //     // 待ちリストに新たなアイテムをランダムで追加
+            //     this.addItemToQueueRandom();
+            // } else {
+            //     // プレイヤーとの衝突でない場合
+            //     // 待ちリストに同じアイテムを追加
+            //     this.addItemToQueue(itemName);
+            // }
+
+            // 待ちリストに新たなアイテムをランダムで追加
             this.addItemToQueueRandom();
+
             // 要素を削除
             this.enemyItemGroup.remove(item, true, true);
             this.enemyItemList = this.enemyItemList.filter(elm => elm !== item);
@@ -149,7 +168,7 @@ class ItemManager {
             // アイテムが画面外に出た場合
             if (playerItem.x <= -GSCONST.ITEM_WIDTH / 2) {
                 // アイテムを削除
-                this.deleteItem(playerItem);
+                this.deleteItem(playerItem, false);
             }
         });
 
@@ -157,7 +176,7 @@ class ItemManager {
             // アイテムが画面外に出た場合
             if (enemyItem.x <= -GSCONST.ITEM_WIDTH / 2) {
                 // アイテムを削除
-                this.deleteItem(enemyItem);
+                this.deleteItem(enemyItem, false);
             }
         });
 
