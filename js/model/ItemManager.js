@@ -7,6 +7,9 @@ class ItemManager {
         // 生成予定アイテムリスト
         this.playerItemQueue = [];
         this.enemyItemQueue = [];
+
+        // アイテムの速度
+        this.itemSpeed = -GSCONST.PLAYER_SPEED;
     }
 
     /**
@@ -28,13 +31,11 @@ class ItemManager {
         this.waitFrame = 0;
 
         // 生成用アイテムの初期設定
+        // 最初に4つアイテムを生成する
         this.addItemToQueueRandom();
         this.addItemToQueueRandom();
         this.addItemToQueueRandom();
         this.addItemToQueueRandom();
-
-        // TODO: デバッグ用
-        // this.addItem(IMG_CONST.BREAD);
     }
 
     /**
@@ -48,7 +49,6 @@ class ItemManager {
         } else {
             this.addItemToQueue(IMG_CONST.MINICOW);
         }
-
     }
 
     /**
@@ -56,7 +56,8 @@ class ItemManager {
      * @param {string} itemName 生成するアイテムID
      */
     addItemToQueue(itemName) {
-        if (itemName == IMG_CONST.BREAD
+        if (
+            itemName == IMG_CONST.BREAD
             || itemName == IMG_CONST.MINICOW
         ) {
             // プレイヤーアイテムの場合
@@ -81,7 +82,7 @@ class ItemManager {
         // アイテムの生成
         let item = new Item(
             this.scene,
-            900,
+            COMMON_CONST.D_WIDTH + GSCONST.ITEM_WIDTH / 2,
             COMMON_CONST.D_HEIGHT - GSCONST.FLOOR_HEIGHT - GSCONST.ITEM_HEIGHT / 2,
             itemName
         );
@@ -104,7 +105,39 @@ class ItemManager {
         }
 
         // 速度の設定
-        item.body.setVelocityX(-GSCONST.PLAYER_SPEED);
+        item.body.setVelocityX(this.itemSpeed);
+    }
+
+    /**
+     * アイテムを削除する
+     * @param {Item} item 削除対象のアイテム
+     */
+    deleteItem(item) {
+        let itemName = item.texture.key;
+        // プレイヤー側のアイテムの場合
+        if (itemName == IMG_CONST.BREAD
+            || itemName == IMG_CONST.MINICOW
+        ) {
+            // 待ちリストに新たなアイテムを追加
+            if (itemName == IMG_CONST.BREAD) {
+                this.addItemToQueue(IMG_CONST.BREADCRUMS);
+            } else if (itemName == IMG_CONST.MINICOW) {
+                this.addItemToQueue(IMG_CONST.MILK);
+            }
+            // 要素を削除
+            this.playerItemGroup.remove(item, true, true);
+            this.playerItemList = this.playerItemList.filter(elm => elm !== item);
+        }
+        // 敵側のアイテムの場合
+        if (itemName == IMG_CONST.BREADCRUMS
+            || itemName == IMG_CONST.MILK
+        ) {
+            // 待ちリストに新たなアイテムを追加
+            this.addItemToQueueRandom();
+            // 要素を削除
+            this.enemyItemGroup.remove(item, true, true);
+            this.enemyItemList = this.enemyItemList.filter(elm => elm !== item);
+        }
     }
 
     /**
@@ -115,48 +148,71 @@ class ItemManager {
         this.playerItemList.forEach(playerItem => {
             // アイテムが画面外に出た場合
             if (playerItem.x <= -GSCONST.ITEM_WIDTH / 2) {
-                // 待ちリストに新たなアイテムを追加
-                this.addItemToQueueRandom();
                 // アイテムを削除
-                let firstChild = this.playerItemGroup.getChildren()[0];
-                this.playerItemGroup.remove(firstChild, true, true);
-                this.playerItemList.splice(0, 1);
+                this.deleteItem(playerItem);
             }
         });
 
         this.enemyItemList.forEach(enemyItem => {
             // アイテムが画面外に出た場合
             if (enemyItem.x <= -GSCONST.ITEM_WIDTH / 2) {
-                // アイテムを待ちリストに追加
-                this.addItemToQueue(enemyItem.texture.key);
                 // アイテムを削除
-                let firstChild = this.enemyItemGroup.getChildren()[0];
-                this.enemyItemGroup.remove(firstChild, true, true);
-                this.enemyItemList.splice(0, 1);
+                this.deleteItem(enemyItem);
             }
         });
 
         // 2秒ごとにアイテムの生成を乱数で決定
         this.waitFrame++;
         if (this.waitFrame >= COMMON_CONST.FPS * GSCONST.ITEM_CREATE_INTERVAL) {
-            if (Math.random() <= GSCONST.ITEM_CREATE_RATE) {
-                // 待ちリストからアイテムを画面に生成
-                this.addItem(this.playerItemQueue[0]);
-                // 待ちリストからアイテムを削除
-                this.playerItemQueue.splice(0, 1);
+            let itemRnd = Math.random();
+            if (itemRnd <= GSCONST.ITEM_CREATE_RATE_PLAYER) {
+                // プレイヤーアイテムの待ちリストが空でない場合
+                if (this.playerItemQueue.length != 0) {
+                    // 待ちリストからアイテムを画面に生成
+                    this.addItem(this.playerItemQueue[0]);
+                    // 待ちリストからアイテムを削除
+                    this.playerItemQueue.splice(0, 1);
+                }
+            } else if (itemRnd <= GSCONST.ITEM_CREATE_RATE_PLAYER + GSCONST.ITEM_CREATE_RATE_ENEMY) {
+                // 敵アイテムの待ちリストが空でない場合
+                if (this.enemyItemQueue.length != 0) {
+                    // 待ちリストからアイテムを画面に生成
+                    this.addItem(this.enemyItemQueue[0]);
+                    // 待ちリストからアイテムを削除
+                    this.enemyItemQueue.splice(0, 1);
+                }
             }
             // 待ち時間をリセット
             this.waitFrame = 0;
 
             // TODO: デバッグ用
-            console.log("queue is ...");
+            console.log("player queue is ...");
+            let playerQueueStr = ""
             this.playerItemQueue.forEach(element => {
-                console.log(element);
+                playerQueueStr += element + ", ";
             });
-            console.log("list is ...");
+            console.log(playerQueueStr);
+
+            console.log("player list is ...");
+            let playerListStr = "";
             this.playerItemList.forEach(element => {
-                console.log(element.texture.key);
+                playerListStr += element.texture.key + ", ";
             });
+            console.log(playerListStr);
+
+            console.log("enemy queue is ...");
+            let enemyQueueStr = ""
+            this.enemyItemQueue.forEach(element => {
+                enemyQueueStr += element + ", ";
+            });
+            console.log(enemyQueueStr);
+
+            console.log("enemy list is ...");
+            let enemyListStr = "";
+            this.enemyItemList.forEach(element => {
+                enemyListStr += element.texture.key + ", ";
+            });
+            console.log(enemyListStr);
         }
 
     }

@@ -85,17 +85,30 @@ class GameScene extends BaseScene {
         this.player.anims.play(ANIM_CONST.PLAYER_RIGHT_ANIM);
 
         // 衝突判定のハンドラ設定
-        this.physics.add.collider(this.player, this.floorManager.floorGroup, this.colHandlerPlayeAndFloor, null, this);
+        // 衝突はcollider, 重なりはoverlap
+        this.physics.add.collider(this.player, this.floorManager.floorGroup, this.colHandlerPlayerAndFloor, null, this);
+        this.physics.add.overlap(this.player, this.itemManager.playerItemGroup, this.colHandlerPlayerAndItem, null, this);
+        this.physics.add.overlap(this.player, this.itemManager.enemyItemGroup, this.colHandlerPlayerAndItem, null, this);
     }
 
     /**
-     * プレイヤーと床の衝突判定
-     * @param {Player} player 
-     * @param {Phaser.GameObjects.Sprite} floor 
+     * プレイヤーと地面の衝突判定
+     * @param {Player} player プレイヤー
+     * @param {Phaser.GameObjects.Sprite} floor 地面
      */
-    colHandlerPlayeAndFloor(player, floor) {
-        // プレイヤーのy方向速度を0にする
-        player.onGroundFlg = true;
+    colHandlerPlayerAndFloor(player, floor) {
+        player.collideToFloor();
+    }
+
+    /**
+     * プレイヤーとアイテムの衝突判定
+     * @param {Player} player プレイヤー
+     * @param {Item} item アイテム
+     */
+    colHandlerPlayerAndItem(player, item) {
+        // 衝突時の処理
+        player.collideToItem(item);
+        this.itemManager.deleteItem(item);
     }
 
     update(time, delta) {
@@ -108,6 +121,11 @@ class GameScene extends BaseScene {
             this.itemManager.update();
             // プレイヤーの更新処理
             this.player.update();
+
+            // 画面内のどこかがクリックされた場合
+            this.input.on('pointerdown', function (pointer) {
+                this.player.jump();
+            }, this);
         }
 
         // ゲームオーバーの場合

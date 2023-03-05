@@ -23,11 +23,8 @@ const GSCONST = {
     PLAYER_START_Y: COMMON_CONST.D_HEIGHT - 300,
 
     // プレイヤーの移動速度
-    PLAYER_SPEED: 180,
-    PLAYER_JUMP_SPEED: 200,
-
-    // プレイヤーの移動速度の変化倍率
-    PLAYER_SPEEDCHG_RATE: 0.1,
+    PLAYER_SPEED: 300,
+    PLAYER_JUMP_SPEED: 1200,
 
     // オブジェクトのID
     OBJECT_ID: {
@@ -41,12 +38,13 @@ const GSCONST = {
         BREADCRUMS: "BREADCRUMS"
     },
 
-    // 2秒毎の、アイテムの生成確率
-    ITEM_CREATE_RATE: 0.4,
-    ITEM_CREATE_INTERVAL: 2,
+    // 一定秒毎の、アイテムの生成確率
+    ITEM_CREATE_RATE_PLAYER: 0.5,
+    ITEM_CREATE_RATE_ENEMY: 0.5,
+    ITEM_CREATE_INTERVAL: 1.5,
 
     // 重力
-    GRAVITY: 500,
+    GRAVITY: 2000,
 }
 
 // 画面描画用定数

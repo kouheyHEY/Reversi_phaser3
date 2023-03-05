@@ -5,6 +5,8 @@ class FloorManager {
         this.floorGroup = scene.physics.add.group();
         // シーンを追加
         this.scene = scene;
+        // 速度を設定
+        this.floorSpeed = -GSCONST.PLAYER_SPEED;
     }
 
     /**
@@ -24,7 +26,7 @@ class FloorManager {
         if (this.floorList.length != 0) {
             addX = this.floorList[this.floorList.length - 1].x
                 + GSCONST.FLOOR_WIDTH
-                - GSCONST.PLAYER_SPEED / COMMON_CONST.FPS
+                + this.floorSpeed / COMMON_CONST.FPS
         }
 
         // 地面の初期化
@@ -41,7 +43,7 @@ class FloorManager {
         floor.body.setSize(GSCONST.FLOOR_WIDTH, GSCONST.FLOOR_HEIGHT);
         // 水平方向のみ移動を有効化
         floor.body.setImmovable(true);
-        floor.body.setVelocityX(-GSCONST.PLAYER_SPEED);
+        floor.body.setVelocityX(this.floorSpeed);
         // リストに追加
         this.floorList.push(floor);
     }

@@ -48,7 +48,39 @@ class Player extends Mover {
      * ジャンプする
      */
     jump() {
-        this.body.setVelocityY(this.jumpSpeed);
+        // 着地している場合
+        if (this.onGroundFlg) {
+            this.onGroundFlg = false;
+            this.body.setVelocityY(-this.jumpSpeed);
+        }
+    }
+
+    /**
+     * プレイヤーと地面の衝突判定
+     * @param {Player} player プレイヤー
+     * @param {Phaser.GameObjects.Sprite} floor 地面
+     */
+    collideToFloor() {
+        if (!this.onGroundFlg) {
+            // プレイヤーのy方向速度を0にする
+            this.onGroundFlg = true;
+        }
+    }
+
+    /**
+     * プレイヤーとアイテムの衝突判定
+     * @param {Item} item アイテム
+     */
+    collideToItem(item) {
+        let itemName = item.texture.key;
+
+        if (itemName == IMG_CONST.BREAD) {
+            // パンと衝突した場合
+            // スピードアップ
+        } else if (itemName == IMG_CONST.MINICOW) {
+            // ミニ牛と衝突した場合
+            // スピードダウン
+        }
     }
 
     update() {
