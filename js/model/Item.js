@@ -17,7 +17,6 @@ class Item extends Phaser.GameObjects.Sprite {
         this.body.setOffset(0, 0);
 
         // 重力の設定
-        this.body.gravity.y = GSCONST.GRAVITY;
-
+        // this.body.gravity.y = GSCONST.GRAVITY;
     }
 }

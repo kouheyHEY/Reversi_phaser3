@@ -41,6 +41,10 @@ const GSCONST = {
         BREADCRUMS: "BREADCRUMS"
     },
 
+    // 2秒毎の、アイテムの生成確率
+    ITEM_CREATE_RATE: 0.4,
+    ITEM_CREATE_INTERVAL: 2,
+
     // 重力
     GRAVITY: 500,
 }
