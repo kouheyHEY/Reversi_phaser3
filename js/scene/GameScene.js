@@ -46,6 +46,13 @@ class GameScene extends BaseScene {
             GSCONST.PLAYER_START_Y
         );
 
+        // 敵の生成
+        this.enemy = new Enemy(
+            this,
+            GSCONST.ENEMY_START_X,
+            GSCONST.ENEMY_START_Y
+        );
+
         // TODO: ゲーム開始フラグ
         this.gameStartFlg = true;
     }
@@ -70,45 +77,52 @@ class GameScene extends BaseScene {
         // パラメータの初期化
         this.initParameters();
 
-        /* スプライトシートを設定 */
-        // プレイヤー
-        this.anims.create({
-            key: ANIM_CONST.PLAYER_RIGHT_ANIM,
-            frames: this.anims.generateFrameNumbers(
-                IMG_CONST.PLAYER_RIGHT,
-                { start: 0, end: 3 }
-            ),
-            frameRate: 10,
-            repeat: -1
-        });
-        // プレイヤーのアニメーションを再生する
-        this.player.anims.play(ANIM_CONST.PLAYER_RIGHT_ANIM);
+        // アニメーション設定
+        this.player.setAnimation();
+        // 敵
+        this.enemy.setAnimation();
 
         // 衝突判定のハンドラ設定
         // 衝突はcollider, 重なりはoverlap
-        this.physics.add.collider(this.player, this.floorManager.floorGroup, this.colHandlerPlayerAndFloor, null, this);
-        this.physics.add.overlap(this.player, this.itemManager.playerItemGroup, this.colHandlerPlayerAndItem, null, this);
-        this.physics.add.overlap(this.player, this.itemManager.enemyItemGroup, this.colHandlerPlayerAndItem, null, this);
+        this.physics.add.collider(this.player, this.floorManager.floorGroup, this.colHandlerMoverAndFloor, null, this);
+        this.physics.add.overlap(this.player, this.itemManager.playerItemGroup, this.colHandlerMoverAndItem, null, this);
+        this.physics.add.overlap(this.player, this.itemManager.enemyItemGroup, this.colHandlerMoverAndItem, null, this);
+
+        this.physics.add.collider(this.enemy, this.floorManager.floorGroup, this.colHandlerMoverAndFloor, null, this);
+        this.physics.add.overlap(this.enemy, this.itemManager.playerItemGroup, this.colHandlerMoverAndItem, null, this);
+        this.physics.add.overlap(this.enemy, this.itemManager.enemyItemGroup, this.colHandlerMoverAndItem, null, this);
+
     }
 
     /**
-     * プレイヤーと地面の衝突判定
-     * @param {Player} player プレイヤー
+     * プレイヤーまたは敵と地面の衝突判定
+     * @param {Mover} mover プレイヤーまたは敵
      * @param {Phaser.GameObjects.Sprite} floor 地面
      */
-    colHandlerPlayerAndFloor(player, floor) {
-        player.collideToFloor();
+    colHandlerMoverAndFloor(mover, floor) {
+        mover.collideToFloor();
     }
 
     /**
-     * プレイヤーとアイテムの衝突判定
-     * @param {Player} player プレイヤー
+     * プレイヤーまたは敵とアイテムの衝突判定
+     * @param {Mover} mover プレイヤーまたは敵
      * @param {Item} item アイテム
      */
-    colHandlerPlayerAndItem(player, item) {
+    colHandlerMoverAndItem(mover, item) {
         // 衝突時の処理
-        player.collideToItem(item);
-        this.itemManager.deleteItem(item, true);
+        let chgSpdAmt = mover.collideToItem(item);
+        // 衝突時、プレイヤーの速度が変化する場合
+        if (chgSpdAmt != 0) {
+            // プレイヤーの速度を変更
+            this.player.speedChg(chgSpdAmt);
+        }
+        if (mover instanceof Player) {
+            // プレイヤーとの衝突の場合
+            this.itemManager.deleteItem(item, true);
+        } else if (mover instanceof Enemy) {
+            // 敵との衝突の場合
+            this.itemManager.deleteItem(item, false);
+        }
     }
 
     update(time, delta) {
@@ -124,16 +138,13 @@ class GameScene extends BaseScene {
 
             // 画面内のどこかがクリックされた場合
             this.input.on('pointerdown', function (pointer) {
+                // プレイヤーがジャンプする
                 this.player.jump();
             }, this);
         }
 
         // ゲームオーバーの場合
         if (this.gameOverFlg) {
-
-        }
-        // ゲーム一時停止した場合
-        if (this.gamePauseFlg) {
 
         }
         // ゲームクリアした場合

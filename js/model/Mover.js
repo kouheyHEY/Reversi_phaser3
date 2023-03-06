@@ -33,4 +33,9 @@ class Mover extends Phaser.GameObjects.Sprite {
     update() {
 
     }
+
+    /**
+     * アニメーションを設定する
+     */
+    setAnimation() { }
 }

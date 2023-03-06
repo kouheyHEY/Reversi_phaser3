@@ -21,10 +21,20 @@ const GSCONST = {
     // プレイヤー、敵の初期座標
     PLAYER_START_X: 350,
     PLAYER_START_Y: COMMON_CONST.D_HEIGHT - 300,
+    ENEMY_START_X: 96,
+    ENEMY_START_Y: COMMON_CONST.D_HEIGHT - 300,
 
     // プレイヤーの移動速度
-    PLAYER_SPEED: 300,
+    PLAYER_SPEED: 480,
     PLAYER_JUMP_SPEED: 1200,
+
+    // 敵の速度
+    ENEMY_JUMP_SPEED: 1200,
+
+    // 後退、前進の速度
+    CHG_SPEED_RATE: 10,
+    // 前進の限界座標
+    LIMIT_X_PLAYER: COMMON_CONST.D_WIDTH / 2,
 
     // オブジェクトのID
     OBJECT_ID: {
