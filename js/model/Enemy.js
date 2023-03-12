@@ -94,19 +94,19 @@ class Enemy extends Mover {
 
         if (itemName == IMG_CONST.BREAD) {
             // パンと衝突した場合
-            // スピードアップ
+            // プレイヤーのスピードダウン
             chgSpdAmt = -GSCONST.CHG_SPEED_RATE;
         } else if (itemName == IMG_CONST.MINICOW) {
             // ミニ牛と衝突した場合
-            // スピードダウン
+            // プレイヤーのスピードアップ
             chgSpdAmt = GSCONST.CHG_SPEED_RATE;
         } else if (itemName == IMG_CONST.BREADCRUMS) {
             // パン粉と衝突した場合
-            // スピードダウン
+            // プレイヤーのスピードアップ
             chgSpdAmt = GSCONST.CHG_SPEED_RATE;
         } else if (itemName == IMG_CONST.MILK) {
             // ミルクと衝突した場合
-            // スピードアップ
+            // プレイヤーのスピードダウン
             chgSpdAmt = -GSCONST.CHG_SPEED_RATE;
         }
 

@@ -14,6 +14,10 @@ const IMGNAME_CONST = {
     BREADCRUMS: "BreadCrumbs.png",
     MINICOW: "MiniCow.png",
     MILK: "Milk.png",
+    ICON: {
+        SPEEDUP: "SpeedUp.png",
+        SPEEDDOWN: "SpeedDown.png",
+    },
 };
 
 // 各画像ファイルのファイルID
@@ -26,6 +30,10 @@ const IMG_CONST = {
     BREADCRUMS: "BREADCRUMS",
     MINICOW: "MINICOW",
     MILK: "MILK",
+    ICON: {
+        SPEEDUP: "SpeedUp.png",
+        SPEEDDOWN: "SpeedDown.png",
+    },
 };
 
 const ANIM_CONST = {

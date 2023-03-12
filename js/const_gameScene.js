@@ -55,6 +55,11 @@ const GSCONST = {
 
     // 重力
     GRAVITY: 2000,
+
+    // アイコンの表示時間(ミリ秒)
+    ICON_DISP_DURATION: {
+        SPEED: 500,
+    }
 }
 
 // 画面描画用定数

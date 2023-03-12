@@ -77,29 +77,35 @@ class Player extends Mover {
     /**
      * プレイヤーとアイテムの衝突判定
      * @param {Item} item アイテム
+     * @return {int} spdChgAmt スピードの変化量
      */
     collideToItem(item) {
         let itemName = item.texture.key;
+        let spdChgAmt = 0;
 
         if (itemName == IMG_CONST.BREAD) {
             // パンと衝突した場合
             // スピードアップ
             this.speedChg(GSCONST.CHG_SPEED_RATE);
+            spdChgAmt = GSCONST.CHG_SPEED_RATE;
         } else if (itemName == IMG_CONST.MINICOW) {
             // ミニ牛と衝突した場合
             // スピードダウン
             this.speedChg(-GSCONST.CHG_SPEED_RATE);
+            spdChgAmt = -GSCONST.CHG_SPEED_RATE;
         } else if (itemName == IMG_CONST.BREADCRUMS) {
             // パン粉と衝突した場合
             // スピードダウン
             this.speedChg(-GSCONST.CHG_SPEED_RATE);
+            spdChgAmt = -GSCONST.CHG_SPEED_RATE;
         } else if (itemName == IMG_CONST.MILK) {
             // ミルクと衝突した場合
             // スピードアップ
             this.speedChg(GSCONST.CHG_SPEED_RATE);
+            spdChgAmt = GSCONST.CHG_SPEED_RATE;
         }
 
-        return 0;
+        return spdChgAmt;
     }
 
     update() {

@@ -18,6 +18,9 @@ class GameLoadScene extends Phaser.Scene {
         this.load.image(IMG_CONST.MINICOW, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.MINICOW);
         this.load.image(IMG_CONST.MILK, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.MILK);
 
+        this.load.image(IMG_CONST.ICON.SPEEDUP, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.ICON.SPEEDUP);
+        this.load.image(IMG_CONST.ICON.SPEEDDOWN, DIR_CONST.DIR_IMG + "/" + IMGNAME_CONST.ICON.SPEEDDOWN);
+
         // 各スプライトシートの読み込み
         // プレイヤー
         this.load.spritesheet(

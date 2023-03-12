@@ -28,6 +28,9 @@ class GameScene extends BaseScene {
         this.itemManager = new ItemManager(this);
         this.itemManager.initParams();
 
+        // アイコン管理クラス
+        this.iconManager = new IconManager(this);
+
         // ブロック（足場）リスト
         this.blockList = [];
         this.blockGroup = this.physics.add.group();
@@ -111,18 +114,27 @@ class GameScene extends BaseScene {
     colHandlerMoverAndItem(mover, item) {
         // 衝突時の処理
         let chgSpdAmt = mover.collideToItem(item);
-        // 衝突時、プレイヤーの速度が変化する場合
-        if (chgSpdAmt != 0) {
+        let isMoverPlayer = (mover instanceof Player);
+
+        // アイテムを削除
+        this.itemManager.deleteItem(item, true);
+
+        if (mover instanceof Player) {
+            // プレイヤーとの衝突の場合
+
+        } else if (mover instanceof Enemy) {
+            // 敵との衝突の場合
             // プレイヤーの速度を変更
             this.player.speedChg(chgSpdAmt);
         }
-        if (mover instanceof Player) {
-            // プレイヤーとの衝突の場合
-            this.itemManager.deleteItem(item, true);
-        } else if (mover instanceof Enemy) {
-            // 敵との衝突の場合
-            this.itemManager.deleteItem(item, false);
-        }
+
+        // 速度変化のアイコンID
+        let iconID = (chgSpdAmt > 0) ?
+            IMG_CONST.ICON.SPEEDUP : IMG_CONST.ICON.SPEEDDOWN;
+
+        // 速度変化のアイコンをプレイヤーの右上に表示
+        this.iconManager.dispIcon(this.player, iconID);
+
     }
 
     update(time, delta) {
