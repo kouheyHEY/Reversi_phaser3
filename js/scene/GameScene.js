@@ -147,6 +147,8 @@ class GameScene extends BaseScene {
             this.itemManager.update();
             // プレイヤーの更新処理
             this.player.update();
+            // アイコンの更新処理
+            this.iconManager.update();
 
             // 画面内のどこかがクリックされた場合
             this.input.on('pointerdown', function (pointer) {

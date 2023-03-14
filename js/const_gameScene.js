@@ -62,6 +62,18 @@ const GSCONST = {
     }
 }
 
+// 表示用テキスト
+const GS_TEXT_CONST = {
+    COL_SCORE: "SCORE: ",
+    COL_TIME: "TIME: ",
+
+    // テキストの初期座標
+    X_SCORE: 30,
+    Y_SCORE: 30,
+    X_TIME: 30,
+    Y_TIME: 80,
+}
+
 // 画面描画用定数
 const GS_SCREEN_COSNT = {
     // 全エリア共通
