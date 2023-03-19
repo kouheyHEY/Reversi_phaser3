@@ -6,6 +6,8 @@ class GameScene extends BaseScene {
         // 各パラメータ
         // ブロック（足場）リスト
         this.blockList = [];
+        // スコア変数
+        this.gameScore = 0;
 
         // 各フラグ
         // ゲームオーバーフラグ
@@ -34,6 +36,9 @@ class GameScene extends BaseScene {
         // ブロック（足場）リスト
         this.blockList = [];
         this.blockGroup = this.physics.add.group();
+
+        // スコア
+        this.gameScore = 0;
 
         // 地面管理クラス
         this.floorManager = new FloorManager(this);
@@ -121,6 +126,22 @@ class GameScene extends BaseScene {
 
         if (mover instanceof Player) {
             // プレイヤーとの衝突の場合
+
+            // スコアの素点
+            let scoreBase = GSCONST.SCORE_BASE[item.texture.key];
+            // プレイヤーの現在の位置からスコア補正を計算
+            // 敵に近いほどスコア補正が大きくなる
+            let scoreRate = Math.ceil(
+                (GSCONST.LIMIT_X_PLAYER - mover.x) / (GSCONST.LIMIT_X_PLAYER / 4)
+            );
+            // スコアを計算
+            this.gameScore += scoreBase * scoreRate;
+
+            console.log("LIMIT:" + GSCONST.LIMIT_X_PLAYER);
+            console.log("MOVER:" + mover.x);
+
+            // スコアを更新して表示
+            this.infoArea.updateScore(this.gameScore);
 
         } else if (mover instanceof Enemy) {
             // 敵との衝突の場合

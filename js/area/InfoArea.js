@@ -1,6 +1,8 @@
 class InfoArea extends BaseArea {
     constructor(scene) {
         super(scene);
+        this.scoreText;
+        this.timeText;
     }
 
     createArea() {
@@ -25,21 +27,28 @@ class InfoArea extends BaseArea {
             );
 
         // テキストの初期化
-        this.scene.add.text(
-            GS_TEXT_CONST.X_SCORE,
-            GS_TEXT_CONST.Y_SCORE,
-            GS_TEXT_CONST.COL_SCORE + "0",
-            { fontSize: '32px', fill: '#000', fontFamily: 'Bit12Bold' }
-        );
-        this.scene.add.text(
-            GS_TEXT_CONST.X_TIME,
-            GS_TEXT_CONST.Y_TIME,
-            GS_TEXT_CONST.COL_TIME + "0",
-            { fontSize: '32px', fill: '#000', fontFamily: 'Bit12Bold' }
-        );
+        this.scoreText =
+            this.scene.add.text(
+                GS_TEXT_CONST.X_SCORE,
+                GS_TEXT_CONST.Y_SCORE,
+                GS_TEXT_CONST.COL_SCORE + "0",
+                { fontSize: '32px', fill: '#000', fontFamily: 'Bit12Bold' }
+            );
+
+        this.timeText =
+            this.scene.add.text(
+                GS_TEXT_CONST.X_TIME,
+                GS_TEXT_CONST.Y_TIME,
+                GS_TEXT_CONST.COL_TIME + "0",
+                { fontSize: '32px', fill: '#000', fontFamily: 'Bit12Bold' }
+            );
     }
 
+    /**
+     * 現在のスコアを更新する
+     * @param {int} _score 現在のスコア
+     */
     updateScore(_score) {
-
+        this.scoreText.setText(GS_TEXT_CONST.COL_SCORE + `${_score}`);
     }
 }

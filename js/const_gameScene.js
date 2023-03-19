@@ -34,7 +34,7 @@ const GSCONST = {
     // 後退、前進の速度
     CHG_SPEED_RATE: 10,
     // 前進の限界座標
-    LIMIT_X_PLAYER: COMMON_CONST.D_WIDTH / 2,
+    LIMIT_X_PLAYER: COMMON_CONST.D_WIDTH * 2 / 3,
 
     // オブジェクトのID
     OBJECT_ID: {
@@ -46,6 +46,14 @@ const GSCONST = {
         MINICOW: "MINICOW",
         BREAD: "BREAD",
         BREADCRUMS: "BREADCRUMS"
+    },
+
+    // アイテムごとの素点
+    SCORE_BASE: {
+        BREAD: 10,
+        MINICOW: 15,
+        MILK: -10,
+        BREADCRUMS: -15
     },
 
     // 一定秒毎の、アイテムの生成確率
